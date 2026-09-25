@@ -7,7 +7,7 @@ from urllib.parse import urlparse, parse_qs
 ROOT=os.path.dirname(os.path.abspath(__file__))
 DB=os.path.join(ROOT,"data","perezelecc.db")
 HOST="127.0.0.1"; PORT=8000
-ADMIN_KEY=os.environ.get("PEREZELECC_ADMIN_KEY","change-moi-avant-utilisation")
+ADMIN_KEY=os.environ.get("PEREZELECC_ADMIN_KEY","decembre10")
 TOKENS=set()
 SERVICES={"Dépannage":1,"Installation électrique":2,"Rénovation électrique":4,"Mise en conformité":2,"Borne de recharge":2,"Autre":1}
 OPEN_HOUR=8; CLOSE_HOUR=18
