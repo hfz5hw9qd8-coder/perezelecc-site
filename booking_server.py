@@ -10,10 +10,13 @@ HOST="127.0.0.1"; PORT=8000
 ADMIN_KEY=os.environ.get("PEREZELECC_ADMIN_KEY","decembre10")
 SERVICES={"Dépannage":1,"Installation électrique":2,"Rénovation électrique":4,"Mise en conformité":2,"Borne de recharge":2,"Autre":1}
 OPEN_HOUR=8; CLOSE_HOUR=18; SLOT_MINUTES=60
+DEFAULT_WORKDAYS="0,1,2,3,4,5"
 os.makedirs(os.path.dirname(DB),exist_ok=True)
 
 def init_db():
-    c=sqlite3.connect(DB); c.execute("""CREATE TABLE IF NOT EXISTS bookings(
+    c=sqlite3.connect(DB); c.execute("""CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS blocked_days(day TEXT PRIMARY KEY)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS bookings(
         id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,phone TEXT NOT NULL,email TEXT,
         service TEXT NOT NULL,notes TEXT,booking_date TEXT NOT NULL,start_time TEXT NOT NULL,
         duration INTEGER NOT NULL,status TEXT NOT NULL DEFAULT 'Confirmée',created_at TEXT NOT NULL)"""); c.commit(); c.close()
@@ -26,6 +29,14 @@ def valid_date(s):
     try: datetime.strptime(s,"%Y-%m-%d"); return True
     except (TypeError,ValueError): return False
 def parse_dt(s): return datetime.combine(date.today(), datetime.strptime(s,"%H:%M").time())
+def admin_settings():
+    c=db(); rows={r["key"]:r["value"] for r in c.execute("SELECT key,value FROM settings").fetchall()}; blocks=[r["day"] for r in c.execute("SELECT day FROM blocked_days ORDER BY day").fetchall()]; c.close()
+    return {"open_hour":int(rows.get("open_hour",OPEN_HOUR)),"close_hour":int(rows.get("close_hour",CLOSE_HOUR)),"workdays":[int(x) for x in rows.get("workdays",DEFAULT_WORKDAYS).split(",") if x!=""],"blocked_days":blocks}
+def day_available(day):
+    if not valid_date(day): return False
+    s=admin_settings(); d=datetime.strptime(day,"%Y-%m-%d").weekday()
+    return d in s["workdays"] and day not in s["blocked_days"]
+
 def occupied(c,day):
     rows=c.execute("SELECT start_time,duration FROM bookings WHERE booking_date=? AND status!='Annulée'",(day,)).fetchall()
     return [(parse_dt(r["start_time"]),int(r["duration"])) for r in rows]
@@ -33,8 +44,9 @@ def interval_free(start,duration,busy):
     end=start+timedelta(hours=duration)
     return all(not (start < bs+timedelta(hours=bd) and bs < end) for bs,bd in busy)
 def slots_for(day,service="Autre"):
-    duration=SERVICES.get(service,1); c=db(); busy=occupied(c,day); c.close()
-    out=[]; cur=datetime.combine(date.today(),time(OPEN_HOUR)); close=datetime.combine(date.today(),time(CLOSE_HOUR))
+    if not day_available(day): return []
+    settings=admin_settings(); duration=SERVICES.get(service,1); c=db(); busy=occupied(c,day); c.close()
+    out=[]; cur=datetime.combine(date.today(),time(settings["open_hour"])); close=datetime.combine(date.today(),time(settings["close_hour"]))
     while cur+timedelta(hours=duration)<=close:
         if interval_free(cur,duration,busy): out.append(cur.strftime("%H:%M"))
         cur+=timedelta(minutes=SLOT_MINUTES)
@@ -59,6 +71,9 @@ class Handler(SimpleHTTPRequestHandler):
                 if not valid_date(day): return send(self,400,{"error":"Date invalide."})
                 if service not in SERVICES: service="Autre"
                 return send(self,200,{"date":day,"service":service,"duration":SERVICES[service],"slots":slots_for(day,service)})
+            if p.path=="/api/admin/settings":
+                if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
+                return send(self,200,admin_settings())
             if p.path=="/api/admin/bookings":
                 if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
                 c=db(); rows=[dict(r) for r in c.execute("SELECT * FROM bookings ORDER BY booking_date,start_time").fetchall()]; c.close()
@@ -68,6 +83,21 @@ class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         try:
             path = urlparse(self.path).path
+            if path=="/api/admin/settings":
+                if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
+                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
+                oh=int(data.get("open_hour",OPEN_HOUR)); ch=int(data.get("close_hour",CLOSE_HOUR)); wd=data.get("workdays",[])
+                if not (0<=oh<ch<=23) or not isinstance(wd,list) or any(int(x) not in range(7) for x in wd): return send(self,400,{"error":"Paramètres horaires invalides."})
+                c=db(); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('open_hour',?)",(str(oh),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('close_hour',?)",(str(ch),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('workdays',?)",(",".join(str(int(x)) for x in sorted(set(wd))),)); c.commit(); c.close()
+                return send(self,200,admin_settings())
+            if path=="/api/admin/blocks":
+                if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
+                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}"); day=clean(data.get("date"),10); blocked=bool(data.get("blocked",True))
+                if not valid_date(day): return send(self,400,{"error":"Date invalide."})
+                c=db()
+                if blocked: c.execute("INSERT OR IGNORE INTO blocked_days(day) VALUES(?)",(day,))
+                else: c.execute("DELETE FROM blocked_days WHERE day=?",(day,))
+                c.commit(); c.close(); return send(self,200,{"ok":True,"date":day,"blocked":blocked})
             if path.startswith("/api/admin/bookings/"):
                 if self.headers.get("X-Admin-Key","") != ADMIN_KEY:
                     return send(self,401,{"error":"Clé administrateur incorrecte."})
@@ -90,7 +120,9 @@ class Handler(SimpleHTTPRequestHandler):
             if not valid_date(day): return send(self,400,{"error":"Date invalide."})
             try: start=parse_dt(st)
             except ValueError: return send(self,400,{"error":"Horaire invalide."})
-            duration=SERVICES[service]; opening=datetime.combine(date.today(),time(OPEN_HOUR)); closing=datetime.combine(date.today(),time(CLOSE_HOUR))
+            settings=admin_settings()
+            if not day_available(day): return send(self,400,{"error":"Ce jour n’est pas disponible à la réservation."})
+            duration=SERVICES[service]; opening=datetime.combine(date.today(),time(settings["open_hour"])); closing=datetime.combine(date.today(),time(settings["close_hour"]))
             if start<opening or start+timedelta(hours=duration)>closing: return send(self,400,{"error":"Horaire indisponible."})
             c=db(); busy=occupied(c,day)
             if not interval_free(start,duration,busy):
