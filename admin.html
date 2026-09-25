@@ -1,61 +1,35 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — PEREZELECC</title><link rel="stylesheet" href="admin.css"></head><body><div id="login" class="login" style="display:grid"><div class="login-card"><div class="admin-mark">P</div><p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1>PEREZELECC</h1><p>Accédez à votre planning et à vos rendez-vous.</p><input id="key" type="password" placeholder="Clé administrateur" autocomplete="current-password"><button id="loginBtn">ACCÉDER AU PLANNING →</button><small id="loginMsg"></small></div></div><main id="app" style="display:none"><header class="top"><div><span class="eyebrow">ESPACE ADMINISTRATEUR</span><h1>Planning <em>PEREZELECC</em></h1></div><button id="logout" class="ghost">Déconnexion</button></header><section class="stats"><article><small>À VENIR</small><strong id="upcoming">0</strong></article><article><small>EN ATTENTE</small><strong id="pending">0</strong></article><article><small>AUJOURD'HUI</small><strong id="todayCount">0</strong></article></section><section class="panel"><div class="panel-head"><div><small>RENDEZ-VOUS</small><h2>Votre planning</h2></div><button id="refresh" class="ghost">↻ Actualiser</button></div><div id="list" class="booking-list"></div></section></main><script>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — PEREZELECC</title><link rel="stylesheet" href="admin.css?v=20260926-planning"></head><body>
+<div id="login" class="login" style="display:grid"><div class="login-card"><div class="admin-mark">P</div><p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1>PEREZELECC</h1><p>Accédez à votre planning et à vos rendez-vous.</p><input id="key" type="password" placeholder="Clé administrateur" autocomplete="current-password"><button id="loginBtn">ACCÉDER AU PLANNING →</button><small id="loginMsg"></small></div></div>
+<main id="app" style="display:none"><header class="top"><div><span class="eyebrow">ESPACE ADMINISTRATEUR</span><h1>Planning <em>PEREZELECC</em></h1></div><div class="top-actions"><button id="settingsBtn" class="ghost">⚙ Paramètres</button><button id="logout" class="ghost">Déconnexion</button></div></header>
+<section class="stats"><article><small>À VENIR</small><strong id="upcoming">0</strong></article><article><small>EN ATTENTE</small><strong id="pending">0</strong></article><article><small>AUJOURD'HUI</small><strong id="todayCount">0</strong></article></section>
+<section class="panel"><div class="planner-head"><div><small>CALENDRIER</small><h2 id="periodTitle">Votre planning</h2></div><div class="planner-actions"><button id="prev" class="ghost">←</button><button id="today" class="ghost">Aujourd'hui</button><button id="next" class="ghost">→</button><button id="weekBtn" class="view-btn active">Semaine</button><button id="monthBtn" class="view-btn">Mois</button><button id="refresh" class="ghost">↻</button></div></div><div id="calendar"></div></section>
+<section class="panel upcoming-panel"><div class="panel-head"><div><small>RENDEZ-VOUS</small><h2>Liste des rendez-vous</h2></div></div><div id="list" class="booking-list"></div></section></main>
+<div id="modal" class="modal" style="display:none"><div class="modal-card"><button id="closeModal" class="modal-close">×</button><p class="eyebrow">RENDEZ-VOUS</p><h2 id="modalTitle"></h2><div id="modalBody"></div></div></div>
+<div id="settings" class="modal" style="display:none"><div class="modal-card"><button id="closeSettings" class="modal-close">×</button><p class="eyebrow">PARAMÈTRES</p><h2>Horaires & disponibilité</h2><div class="settings-grid"><label>Ouverture<select id="openHour"></select></label><label>Fermeture<select id="closeHour"></select></label></div><p class="setting-label">Jours travaillés</p><div id="workdays" class="days"></div><button id="saveSettings" class="primary">ENREGISTRER</button><p class="setting-label">Bloquer une journée</p><div class="block-row"><input id="blockDate" type="date"><button id="blockBtn" class="ghost">Bloquer</button></div><div id="blockedList" class="blocked-list"></div></div></div>
+<script>
 (function(){
-  const API=window.location.origin;
-  const login=document.getElementById('login'),app=document.getElementById('app'),keyInput=document.getElementById('key'),loginBtn=document.getElementById('loginBtn'),loginMsg=document.getElementById('loginMsg'),list=document.getElementById('list');
-  let key='';
-  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  async function getBookings(){
-    if(!key) throw new Error('Veuillez saisir la clé administrateur.');
-    const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),5000);
-    try{
-      const r=await fetch(API+'/api/admin/bookings',{method:'GET',headers:{'X-Admin-Key':key,'Accept':'application/json'},cache:'no-store',signal:controller.signal});
-      let data={}; try{data=await r.json()}catch(_){}
-      if(!r.ok) throw new Error(data.error||('Erreur serveur HTTP '+r.status));
-      return Array.isArray(data.bookings)?data.bookings:[];
-    }catch(e){
-      if(e.name==='AbortError') throw new Error('Le serveur local ne répond pas. Vérifie que booking_server.py est lancé.');
-      throw e;
-    }finally{clearTimeout(timer)}
-  }
-  function render(bookings){
-    const today=new Date().toISOString().slice(0,10);
-    document.getElementById('upcoming').textContent=bookings.filter(b=>b.booking_date>=today&&b.status!=='Annulée'&&b.status!=='Terminée').length;
-    document.getElementById('pending').textContent=bookings.filter(b=>b.status==='En attente').length;
-    document.getElementById('todayCount').textContent=bookings.filter(b=>b.booking_date===today&&b.status!=='Annulée').length;
-    if(!bookings.length){list.innerHTML='<div class="empty">Aucun rendez-vous enregistré.</div>';return;}
-    list.innerHTML=bookings.map(b=>{
-      const opts=['En attente','Confirmée','Terminée','Annulée'].map(v=>'<option value="'+esc(v)+'" '+(v===b.status?'selected':'')+'>'+esc(v)+'</option>').join('');
-      return '<article class="booking"><div class="booking-date"><small>'+esc(b.booking_date)+'</small><strong>'+esc(b.start_time)+'</strong><small>'+esc(b.duration)+' h</small></div><div class="booking-info"><strong>'+esc(b.name)+'</strong><p>'+esc(b.service)+'</p><p>'+esc(b.phone)+(b.email?' · '+esc(b.email):'')+'</p>'+(b.notes?'<p>'+esc(b.notes)+'</p>':'')+'</div><select class="status" data-id="'+esc(b.id)+'">'+opts+'</select></article>';
-    }).join('');
-    list.querySelectorAll('.status').forEach(s=>s.addEventListener('change',async()=>{
-      s.disabled=true;
-      try{
-        const r=await fetch(API+'/api/admin/bookings/'+encodeURIComponent(s.dataset.id),{method:'POST',headers:{'X-Admin-Key':key,'Content-Type':'application/json'},body:JSON.stringify({status:s.value})});
-        const data=await r.json();
-        if(!r.ok) throw new Error(data.error||'Modification impossible.');
-        render(await getBookings());
-      }catch(e){alert(e.message);try{render(await getBookings())}catch(_){}}
-      finally{s.disabled=false;}
-    }));
-  }
-  async function connect(){
-    key=keyInput.value.trim();
-    loginBtn.disabled=true; loginBtn.textContent='CONNEXION…'; loginMsg.textContent='';
-    try{
-      const bookings=await getBookings();
-      login.style.display='none'; app.style.display='block'; render(bookings);
-    }catch(e){
-      loginMsg.textContent=e.message||'Erreur de connexion.';
-    }finally{
-      loginBtn.disabled=false; loginBtn.textContent='ACCÉDER AU PLANNING →';
-    }
-  }
-  loginBtn.addEventListener('click',connect);
-  keyInput.addEventListener('keydown',e=>{if(e.key==='Enter')connect()});
-  document.getElementById('logout').addEventListener('click',()=>{key='';app.style.display='none';login.style.display='grid';keyInput.value='';keyInput.focus();});
-  document.getElementById('refresh').addEventListener('click',async()=>{
-    try{render(await getBookings())}catch(e){alert(e.message)}
-  });
-  keyInput.focus();
+const API=window.location.origin;let key='',bookings=[],settings={open_hour:8,close_hour:18,workdays:[0,1,2,3,4,5],blocked_days:[]},view='week',cursor=new Date();
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const pad=n=>String(n).padStart(2,'0'), iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>new Date(s+'T12:00:00'), fmtDate=d=>new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(d), statusClass=s=>s==='Annulée'?'cancelled':s==='Terminée'?'done':s==='En attente'?'pending':'confirmed';
+async function api(path,opt={}){const r=await fetch(API+path,{...opt,headers:{'X-Admin-Key':key,'Content-Type':'application/json',...(opt.headers||{})},cache:'no-store'});let d={};try{d=await r.json()}catch(_){}if(!r.ok)throw new Error(d.error||'Erreur serveur HTTP '+r.status);return d}
+async function load(){const [b,s]=await Promise.all([api('/api/admin/bookings'),api('/api/admin/settings')]);bookings=b.bookings||[];settings=s;renderStats();renderCalendar();renderList()}
+function renderStats(){const today=iso(new Date());$('upcoming').textContent=bookings.filter(b=>b.booking_date>=today&&!['Annulée','Terminée'].includes(b.status)).length;$('pending').textContent=bookings.filter(b=>b.status==='En attente').length;$('todayCount').textContent=bookings.filter(b=>b.booking_date===today&&b.status!=='Annulée').length}
+function startOfWeek(d){const x=new Date(d);x.setDate(x.getDate()-x.getDay()+1);x.setHours(12);return x}
+function daysForView(){if(view==='week'){const s=startOfWeek(cursor);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d})}const y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1);const start=new Date(first);start.setDate(first.getDate()-((first.getDay()+6)%7));return Array.from({length:42},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return d})}
+function renderCalendar(){const days=daysForView(),today=iso(new Date());$('periodTitle').textContent=view==='week'?new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(days[0])+' — '+new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(days[6]):new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(cursor);if(view==='month'){renderMonth(days,today);return}renderWeek(days,today)}
+function renderWeek(days,today){const hours=[];for(let h=settings.open_hour;h<settings.close_hour;h++)hours.push(h);let html='<div class="week-grid"><div class="time-col"></div>'+days.map(d=>'<div class="day-head '+(iso(d)===today?'today':'')+'"><b>'+new Intl.DateTimeFormat('fr-FR',{weekday:'short'}).format(d).replace('.','')+'</b><span>'+d.getDate()+'</span></div>').join('');hours.forEach(h=>{html+='<div class="time-label">'+pad(h)+':00</div>';days.forEach(d=>{const day=iso(d),blocked=settings.blocked_days.includes(day)||!settings.workdays.includes(d.getDay()===0?6:d.getDay()-1);const bs=bookings.filter(b=>b.booking_date===day&&Number(b.start_time.slice(0,2))===h);html+='<div class="slot '+(blocked?'blocked':'')+'" data-date="'+day+'">'+bs.map(b=>'<button class="event '+statusClass(b.status)+'" data-id="'+b.id+'"><b>'+esc(b.start_time)+'</b> '+esc(b.name)+'<small>'+esc(b.service)+'</small></button>').join('')+'</div>'})});html+='</div>';$('calendar').innerHTML=html;wireEvents()}
+function renderMonth(days,today){let html='<div class="month-grid">'+['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(x=>'<div class="month-weekday">'+x+'</div>').join('');days.forEach(d=>{const day=iso(d),bs=bookings.filter(b=>b.booking_date===day),outside=d.getMonth()!==cursor.getMonth(),blocked=settings.blocked_days.includes(day);html+='<div class="month-cell '+(outside?'outside ':'')+(day===today?'today ':'')+(blocked?'blocked':'')+'"><div class="month-num">'+d.getDate()+'</div>'+bs.slice(0,3).map(b=>'<button class="event '+statusClass(b.status)+'" data-id="'+b.id+'">'+esc(b.start_time)+' '+esc(b.name)+'</button>').join('')+(bs.length>3?'<small>+'+(bs.length-3)+' autre(s)</small>':'')+'</div>'});html+='</div>';$('calendar').innerHTML=html;wireEvents()}
+function wireEvents(){$('#calendar').querySelectorAll('.event').forEach(e=>e.onclick=()=>showBooking(e.dataset.id));$('#calendar').querySelectorAll('.slot').forEach(e=>e.ondblclick=()=>toggleBlock(e.dataset.date))}
+function renderList(){const sorted=[...bookings].sort((a,b)=>(a.booking_date+a.start_time).localeCompare(b.booking_date+b.start_time));if(!sorted.length){$('list').innerHTML='<div class="empty">Aucun rendez-vous enregistré.</div>';return}$('list').innerHTML=sorted.map(b=>'<article class="booking"><div class="booking-date"><small>'+esc(b.booking_date)+'</small><strong>'+esc(b.start_time)+'</strong><small>'+esc(b.duration)+' h</small></div><div class="booking-info"><strong>'+esc(b.name)+'</strong><p>'+esc(b.service)+'</p><p>'+esc(b.phone)+(b.email?' · '+esc(b.email):'')+'</p>'+(b.notes?'<p>'+esc(b.notes)+'</p>':'')+'</div><select class="status" data-id="'+b.id+'">'+['En attente','Confirmée','Terminée','Annulée'].map(v=>'<option '+(v===b.status?'selected':'')+'>'+v+'</option>').join('')+'</select></article>').join('');document.querySelectorAll('.status').forEach(s=>s.onchange=async()=>{try{await api('/api/admin/bookings/'+s.dataset.id,{method:'POST',body:JSON.stringify({status:s.value})});await load()}catch(e){alert(e.message)}})}
+function showBooking(id){const b=bookings.find(x=>String(x.id)===String(id));if(!b)return;$('modalTitle').textContent=b.name;$('modalBody').innerHTML='<div class="detail"><b>'+esc(fmtDate(parse(b.booking_date)))+'</b><strong>'+esc(b.start_time)+' · '+esc(b.duration)+' h</strong><span>'+esc(b.service)+'</span><span>☎ '+esc(b.phone)+'</span>'+(b.email?'<span>✉ '+esc(b.email)+'</span>':'')+(b.notes?'<p>'+esc(b.notes)+'</p>':'')+'<label>Statut<select id="modalStatus">'+['En attente','Confirmée','Terminée','Annulée'].map(v=>'<option '+(v===b.status?'selected':'')+'>'+v+'</option>').join('')+'</select></label></div>';$('modalStatus').onchange=async e=>{await api('/api/admin/bookings/'+b.id,{method:'POST',body:JSON.stringify({status:e.target.value})});$('modal').style.display='none';await load()};$('modal').style.display='grid'}
+async function toggleBlock(day){const blocked=!settings.blocked_days.includes(day);await api('/api/admin/blocks',{method:'POST',body:JSON.stringify({date:day,blocked})});settings.blocked_days=blocked?[...settings.blocked_days,day]:settings.blocked_days.filter(x=>x!==day);renderCalendar()}
+async function openSettings(){for(let h=0;h<=23;h++){$('openHour').innerHTML+= '<option value="'+h+'">'+pad(h)+':00</option>';$('closeHour').innerHTML+= '<option value="'+h+'">'+pad(h)+':00</option>'} $('openHour').value=settings.open_hour;$('closeHour').value=settings.close_hour;$('workdays').innerHTML=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((n,i)=>'<label><input type="checkbox" value="'+i+'" '+(settings.workdays.includes(i)?'checked':'')+'>'+n+'</label>').join('');$('blockedList').innerHTML=settings.blocked_days.length?settings.blocked_days.map(d=>'<button data-day="'+d+'">'+d+' ×</button>').join(''):'<span>Aucun jour bloqué.</span>';$('blockedList').querySelectorAll('button').forEach(b=>b.onclick=async()=>{await toggleBlock(b.dataset.day);openSettings()});$('settings').style.display='grid'}
+$('saveSettings').onclick=async()=>{const wd=[...document.querySelectorAll('#workdays input:checked')].map(x=>Number(x.value));try{settings=await api('/api/admin/settings',{method:'POST',body:JSON.stringify({open_hour:Number($('openHour').value),close_hour:Number($('closeHour').value),workdays:wd})});$('settings').style.display='none';await load()}catch(e){alert(e.message)}};
+$('blockBtn').onclick=async()=>{if($('blockDate').value){await toggleBlock($('blockDate').value);openSettings()}};
+$('prev').onclick=()=>{if(view==='week')cursor.setDate(cursor.getDate()-7);else cursor.setMonth(cursor.getMonth()-1);renderCalendar()};
+$('next').onclick=()=>{if(view==='week')cursor.setDate(cursor.getDate()+7);else cursor.setMonth(cursor.getMonth()+1);renderCalendar()};
+$('today').onclick=()=>{cursor=new Date();renderCalendar()};$('weekBtn').onclick=()=>{view='week';$('weekBtn').classList.add('active');$('monthBtn').classList.remove('active');renderCalendar()};$('monthBtn').onclick=()=>{view='month';$('monthBtn').classList.add('active');$('weekBtn').classList.remove('active');renderCalendar()};$('refresh').onclick=()=>load().catch(e=>alert(e.message));$('closeModal').onclick=()=>$('modal').style.display='none';$('closeSettings').onclick=()=>$('settings').style.display='none';$('logout').onclick=()=>{key='';$('app').style.display='none';$('login').style.display='grid';$('key').value='';$('key').focus()};$('settingsBtn').onclick=openSettings;
+$('loginBtn').onclick=async()=>{key=$('key').value.trim();$('loginBtn').disabled=true;try{await load();$('login').style.display='none';$('app').style.display='block'}catch(e){$('loginMsg').textContent=e.message||'Erreur de connexion.'}finally{$('loginBtn').disabled=false}};$('key').onkeydown=e=>{if(e.key==='Enter')$('loginBtn').click()};$('key').focus();
 })();
 </script></body></html>
