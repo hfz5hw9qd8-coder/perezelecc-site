@@ -1,1 +1,60 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — PEREZELECC</title><link rel="stylesheet" href="admin.css"></head><body><div id="login" class="login"><div class="login-card"><div class="admin-mark">P</div><p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1>PEREZELECC</h1><p>Accédez à votre planning et à vos rendez-vous.</p><input id="key" type="password" placeholder="Clé administrateur" autocomplete="current-password"><button id="loginBtn">ACCÉDER AU PLANNING →</button><small id="loginMsg"></small></div></div><main id="app" hidden><header class="top"><div><span class="eyebrow">ESPACE ADMINISTRATEUR</span><h1>Planning <em>PEREZELECC</em></h1></div><button id="logout" class="ghost">Déconnexion</button></header><section class="stats"><article><small>À VENIR</small><strong id="upcoming">0</strong></article><article><small>EN ATTENTE</small><strong id="pending">0</strong></article><article><small>AUJOURD'HUI</small><strong id="todayCount">0</strong></article></section><section class="panel"><div class="panel-head"><div><small>RENDEZ-VOUS</small><h2>Votre planning</h2></div><button id="refresh" class="ghost">↻ Actualiser</button></div><div id="list" class="booking-list"></div></section></main><script src="admin.js?v=20260926-2"></script></body></html>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — PEREZELECC</title><link rel="stylesheet" href="admin.css"></head><body><div id="login" class="login"><div class="login-card"><div class="admin-mark">P</div><p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1>PEREZELECC</h1><p>Accédez à votre planning et à vos rendez-vous.</p><input id="key" type="password" placeholder="Clé administrateur" autocomplete="current-password"><button id="loginBtn">ACCÉDER AU PLANNING →</button><small id="loginMsg"></small></div></div><main id="app" hidden><header class="top"><div><span class="eyebrow">ESPACE ADMINISTRATEUR</span><h1>Planning <em>PEREZELECC</em></h1></div><button id="logout" class="ghost">Déconnexion</button></header><section class="stats"><article><small>À VENIR</small><strong id="upcoming">0</strong></article><article><small>EN ATTENTE</small><strong id="pending">0</strong></article><article><small>AUJOURD'HUI</small><strong id="todayCount">0</strong></article></section><section class="panel"><div class="panel-head"><div><small>RENDEZ-VOUS</small><h2>Votre planning</h2></div><button id="refresh" class="ghost">↻ Actualiser</button></div><div id="list" class="booking-list"></div></section></main><script>
+(function(){
+  const API=window.location.origin;
+  const login=document.getElementById('login'),app=document.getElementById('app'),keyInput=document.getElementById('key'),loginBtn=document.getElementById('loginBtn'),loginMsg=document.getElementById('loginMsg'),list=document.getElementById('list');
+  let key='';
+  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  async function getBookings(){
+    if(!key) throw new Error('Veuillez saisir la clé administrateur.');
+    const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),5000);
+    try{
+      const r=await fetch(API+'/api/admin/bookings',{method:'GET',headers:{'X-Admin-Key':key,'Accept':'application/json'},cache:'no-store',signal:controller.signal});
+      let data={}; try{data=await r.json()}catch(_){}
+      if(!r.ok) throw new Error(data.error||('Erreur serveur HTTP '+r.status));
+      return Array.isArray(data.bookings)?data.bookings:[];
+    }catch(e){
+      if(e.name==='AbortError') throw new Error('Le serveur local ne répond pas. Vérifie que booking_server.py est lancé.');
+      throw e;
+    }finally{clearTimeout(timer)}
+  }
+  function render(bookings){
+    const today=new Date().toISOString().slice(0,10);
+    document.getElementById('upcoming').textContent=bookings.filter(b=>b.booking_date>=today&&b.status!=='Annulée'&&b.status!=='Terminée').length;
+    document.getElementById('pending').textContent=bookings.filter(b=>b.status==='En attente').length;
+    document.getElementById('todayCount').textContent=bookings.filter(b=>b.booking_date===today&&b.status!=='Annulée').length;
+    if(!bookings.length){list.innerHTML='<div class="empty">Aucun rendez-vous enregistré.</div>';return;}
+    list.innerHTML=bookings.map(b=>{
+      const opts=['En attente','Confirmée','Terminée','Annulée'].map(v=>'<option value="'+esc(v)+'" '+(v===b.status?'selected':'')+'>'+esc(v)+'</option>').join('');
+      return '<article class="booking"><div class="booking-date"><small>'+esc(b.booking_date)+'</small><strong>'+esc(b.start_time)+'</strong><small>'+esc(b.duration)+' h</small></div><div class="booking-info"><strong>'+esc(b.name)+'</strong><p>'+esc(b.service)+'</p><p>'+esc(b.phone)+(b.email?' · '+esc(b.email):'')+'</p>'+(b.notes?'<p>'+esc(b.notes)+'</p>':'')+'</div><select class="status" data-id="'+esc(b.id)+'">'+opts+'</select></article>';
+    }).join('');
+    list.querySelectorAll('.status').forEach(s=>s.addEventListener('change',async()=>{
+      s.disabled=true;
+      try{
+        const r=await fetch(API+'/api/admin/bookings/'+encodeURIComponent(s.dataset.id),{method:'POST',headers:{'X-Admin-Key':key,'Content-Type':'application/json'},body:JSON.stringify({status:s.value})});
+        const data=await r.json();
+        if(!r.ok) throw new Error(data.error||'Modification impossible.');
+        render(await getBookings());
+      }catch(e){alert(e.message);try{render(await getBookings())}catch(_){}}
+      finally{s.disabled=false;}
+    }));
+  }
+  async function connect(){
+    loginBtn.disabled=true; loginBtn.textContent='CONNEXION…'; loginMsg.textContent='';
+    try{
+      const bookings=await getBookings();
+      login.hidden=true; app.hidden=false; render(bookings);
+    }catch(e){
+      loginMsg.textContent=e.message||'Erreur de connexion.';
+    }finally{
+      loginBtn.disabled=false; loginBtn.textContent='ACCÉDER AU PLANNING →';
+    }
+  }
+  loginBtn.addEventListener('click',connect);
+  keyInput.addEventListener('keydown',e=>{if(e.key==='Enter')connect()});
+  document.getElementById('logout').addEventListener('click',()=>{key='';app.hidden=true;login.hidden=false;keyInput.value='';keyInput.focus();});
+  document.getElementById('refresh').addEventListener('click',async()=>{
+    try{render(await getBookings())}catch(e){alert(e.message)}
+  });
+  keyInput.focus();
+})();
+</script></body></html>
