@@ -232,70 +232,6 @@
 
 
         <!-- =====================================================
-             RENDEZ-VOUS EN LIGNE — CALENDRIER INTÉGRÉ
-             ===================================================== -->
-        <section id="rendez-vous" class="booking-home section-cream">
-            <div class="container">
-                <div class="booking-home-heading">
-                    <div class="section-topline">
-                        <span>RENDEZ-VOUS EN LIGNE</span><i></i>
-                    </div>
-                    <div class="booking-home-heading-grid">
-                        <div>
-                            <h2>Choisissez votre<br><em>créneau d'intervention.</em></h2>
-                        </div>
-                        <p>Consultez les disponibilités PEREZELECC et réservez directement votre intervention. Le calendrier se met à jour selon les rendez-vous déjà pris.</p>
-                    </div>
-                </div>
-
-                <div class="booking-home-card">
-                    <div class="booking-home-calendar">
-                        <div class="booking-home-brand">
-                            <span class="booking-home-mark">P</span>
-                            <div><strong>PEREZELECC</strong><small>Électricien · Gard · Arles · Alpilles</small></div>
-                        </div>
-                        <div class="booking-home-monthbar">
-                            <button id="home-booking-prev" type="button" aria-label="Mois précédent">‹</button>
-                            <div><small>CHOISISSEZ UNE DATE</small><h3 id="home-booking-month"></h3></div>
-                            <button id="home-booking-next" type="button" aria-label="Mois suivant">›</button>
-                        </div>
-                        <div class="booking-home-week"><span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span></div>
-                        <div id="home-booking-calendar" class="booking-home-days"></div>
-                        <div class="booking-home-legend"><span><i></i> Disponible</span><span><b></b> Sélectionné</span></div>
-                    </div>
-
-                    <div class="booking-home-details">
-                        <div class="booking-home-date"><small>DATE SÉLECTIONNÉE</small><strong id="home-booking-selected">Choisissez une date</strong></div>
-                        <label class="booking-home-field">Type d'intervention
-                            <select id="home-booking-service">
-                                <option value="">Choisir…</option>
-                                <option>Dépannage</option>
-                                <option>Installation électrique</option>
-                                <option>Rénovation électrique</option>
-                                <option>Mise en conformité</option>
-                                <option>Borne de recharge</option>
-                                <option>Autre</option>
-                            </select>
-                        </label>
-                        <div class="booking-home-duration"><small>DURÉE ESTIMÉE</small><strong id="home-booking-duration">—</strong></div>
-                        <div class="booking-home-slots-wrap"><small>HORAIRES DISPONIBLES</small><div id="home-booking-slots" class="booking-home-slots">Sélectionnez une date.</div></div>
-                        <form id="home-booking-form" class="booking-home-form">
-                            <div class="booking-home-contact-grid">
-                                <label>Nom / entreprise<input id="home-booking-name" required></label>
-                                <label>Téléphone<input id="home-booking-phone" type="tel" required></label>
-                                <label>Email<input id="home-booking-email" type="email"></label>
-                            </div>
-                            <label>Précisions<textarea id="home-booking-notes" rows="3" placeholder="Adresse, nature du problème…"></textarea></label>
-                            <div id="home-booking-message" class="booking-home-message" aria-live="polite"></div>
-                            <button id="home-booking-confirm" class="button button-gold booking-home-continue disabled" type="submit">CONFIRMER LE RENDEZ-VOUS <span>→</span></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- =====================================================
              SERVICES
              ===================================================== -->
         <section id="services" class="section section-cream">
@@ -562,6 +498,72 @@
             </div>
 
         </section>
+
+
+        <!-- =====================================================
+             RENDEZ-VOUS EN LIGNE — CALENDRIER INTÉGRÉ
+             ===================================================== -->
+        <section id="rendez-vous" class="booking-home section-cream">
+            <div class="container">
+                <div class="booking-home-heading">
+                    <div class="section-topline">
+                        <span>RENDEZ-VOUS EN LIGNE</span><i></i>
+                    </div>
+                    <div class="booking-home-heading-grid">
+                        <div>
+                            <h2>Choisissez votre<br><em>créneau d'intervention.</em></h2>
+                        </div>
+                        <p>Consultez les disponibilités PEREZELECC et réservez directement votre intervention. Le calendrier se met à jour selon les rendez-vous déjà pris.</p>
+                    </div>
+                </div>
+
+                <div class="booking-home-card">
+                    <div class="booking-home-calendar">
+                        <div class="booking-home-brand">
+                            <span class="booking-home-mark">P</span>
+                            <div><strong>PEREZELECC</strong><small>Électricien · Gard · Arles · Alpilles</small></div>
+                        </div>
+                        <div class="booking-home-monthbar">
+                            <button id="home-booking-prev" type="button" aria-label="Mois précédent">‹</button>
+                            <div><small>CHOISISSEZ UNE DATE</small><h3 id="home-booking-month"></h3></div>
+                            <button id="home-booking-next" type="button" aria-label="Mois suivant">›</button>
+                        </div>
+                        <div class="booking-home-week"><span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span></div>
+                        <div id="home-booking-calendar" class="booking-home-days"></div>
+                        <div class="booking-home-legend"><span><i></i> Disponible</span><span><b></b> Sélectionné</span></div>
+                    </div>
+
+                    <div class="booking-home-details">
+                        <div class="booking-home-date"><small>DATE SÉLECTIONNÉE</small><strong id="home-booking-selected">Choisissez une date</strong></div>
+                        <label class="booking-home-field">Type d'intervention
+                            <select id="home-booking-service">
+                                <option value="">Choisir…</option>
+                                <option>Dépannage</option>
+                                <option>Installation électrique</option>
+                                <option>Rénovation électrique</option>
+                                <option>Mise en conformité</option>
+                                <option>Borne de recharge</option>
+                                <option>Autre</option>
+                            </select>
+                        </label>
+                        <div class="booking-home-duration"><small>DURÉE ESTIMÉE</small><strong id="home-booking-duration">—</strong></div>
+                        <div class="booking-home-slots-wrap"><small>HORAIRES DISPONIBLES</small><div id="home-booking-slots" class="booking-home-slots">Sélectionnez une date.</div></div>
+                        <form id="home-booking-form" class="booking-home-form">
+                            <div class="booking-home-contact-grid">
+                                <label>Nom / entreprise<input id="home-booking-name" required></label>
+                                <label>Téléphone<input id="home-booking-phone" type="tel" required></label>
+                                <label>Email<input id="home-booking-email" type="email"></label>
+                            </div>
+                            <label>Précisions<textarea id="home-booking-notes" rows="3" placeholder="Adresse, nature du problème…"></textarea></label>
+                            <div id="home-booking-message" class="booking-home-message" aria-live="polite"></div>
+                            <button id="home-booking-confirm" class="button button-gold booking-home-continue disabled" type="submit">CONFIRMER LE RENDEZ-VOUS <span>→</span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
 
 
         <!-- =====================================================
