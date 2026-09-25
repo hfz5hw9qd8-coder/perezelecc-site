@@ -67,7 +67,21 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception as e: return send(self,500,{"error":"Erreur serveur.","detail":str(e)})
     def do_POST(self):
         try:
-            if urlparse(self.path).path!="/api/bookings": return send(self,404,{"error":"Endpoint inconnu."})
+            path = urlparse(self.path).path
+            if path.startswith("/api/admin/bookings/"):
+                if self.headers.get("X-Admin-Key","") != ADMIN_KEY:
+                    return send(self,401,{"error":"Clé administrateur incorrecte."})
+                booking_id=path.rsplit("/",1)[-1]
+                if not booking_id.isdigit():
+                    return send(self,400,{"error":"Identifiant invalide."})
+                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
+                status=clean(data.get("status"),30)
+                if status not in {"Confirmée","En attente","Terminée","Annulée"}:
+                    return send(self,400,{"error":"Statut invalide."})
+                c=db(); cur=c.execute("UPDATE bookings SET status=? WHERE id=?",(status,int(booking_id))); c.commit(); c.close()
+                if cur.rowcount==0: return send(self,404,{"error":"Rendez-vous introuvable."})
+                return send(self,200,{"ok":True,"status":status})
+            if path!="/api/bookings": return send(self,404,{"error":"Endpoint inconnu."})
             n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
             name=clean(data.get("name"),120); phone=clean(data.get("phone"),40); email=clean(data.get("email"),120)
             service=clean(data.get("service"),80); notes=clean(data.get("notes"),500); day=clean(data.get("date"),10); st=clean(data.get("time"),5)
