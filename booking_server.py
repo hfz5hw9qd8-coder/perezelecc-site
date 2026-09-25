@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import json, os, re, sqlite3
-from typing import Any, TypedDict
+from typing import Any, TypedDict, cast
 from datetime import datetime, date, time, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
@@ -38,7 +38,7 @@ def valid_date(s: Any) -> bool:
     except ValueError: return False
 def parse_dt(s: str) -> datetime: return datetime.combine(date.today(), datetime.strptime(s,"%H:%M").time())
 def admin_settings() -> AdminSettings:
-    c=db(); rows={r["key"]:r["value"] for r in c.execute("SELECT key,value FROM settings").fetchall()}; blocks=[r["day"] for r in c.execute("SELECT day FROM blocked_days ORDER BY day").fetchall()]; c.close()
+    c=db(); raw_rows=cast(list[sqlite3.Row],c.execute("SELECT key,value FROM settings").fetchall()); rows={str(r["key"]):str(r["value"]) for r in raw_rows}; raw_blocks=cast(list[sqlite3.Row],c.execute("SELECT day FROM blocked_days ORDER BY day").fetchall()); blocks=[str(r["day"]) for r in raw_blocks]; c.close()
     return {"open_hour":int(rows.get("open_hour",OPEN_HOUR)),"close_hour":int(rows.get("close_hour",CLOSE_HOUR)),"workdays":[int(x) for x in rows.get("workdays",DEFAULT_WORKDAYS).split(",") if x!=""],"blocked_days":blocks}
 def day_available(day: str) -> bool:
     if not valid_date(day): return False
@@ -46,7 +46,7 @@ def day_available(day: str) -> bool:
     return d in s["workdays"] and day not in s["blocked_days"]
 
 def occupied(c: sqlite3.Connection,day: str) -> list[tuple[datetime,int]]:
-    rows=c.execute("SELECT start_time,duration FROM bookings WHERE booking_date=? AND status!='Annulée'",(day,)).fetchall()
+    rows=cast(list[sqlite3.Row],c.execute("SELECT start_time,duration FROM bookings WHERE booking_date=? AND status!='Annulée'",(day,)).fetchall())
     return [(parse_dt(r["start_time"]),int(r["duration"])) for r in rows]
 def interval_free(start: datetime,duration: int,busy: list[tuple[datetime,int]]) -> bool:
     end=start+timedelta(hours=duration)
@@ -54,7 +54,7 @@ def interval_free(start: datetime,duration: int,busy: list[tuple[datetime,int]])
 def slots_for(day: str,service: str="Autre") -> list[str]:
     if not day_available(day): return []
     settings=admin_settings(); duration=SERVICES.get(service,1); c=db(); busy=occupied(c,day); c.close()
-    out=[]; cur=datetime.combine(date.today(),time(settings["open_hour"])); close=datetime.combine(date.today(),time(settings["close_hour"]))
+    out: list[str]=[]; cur=datetime.combine(date.today(),time(settings["open_hour"])); close=datetime.combine(date.today(),time(settings["close_hour"]))
     while cur+timedelta(hours=duration)<=close:
         if interval_free(cur,duration,busy): out.append(cur.strftime("%H:%M"))
         cur+=timedelta(minutes=SLOT_MINUTES)
@@ -94,13 +94,13 @@ class Handler(SimpleHTTPRequestHandler):
             if path=="/api/admin/settings":
                 if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
                 n=int(self.headers.get("Content-Length","0")); data: dict[str, Any] = json.loads(self.rfile.read(n) or b"{}")
-                oh=int(data.get("open_hour",OPEN_HOUR)); ch=int(data.get("close_hour",CLOSE_HOUR)); wd=data.get("workdays",[])
+                oh=int(data.get("open_hour",OPEN_HOUR)); ch=int(data.get("close_hour",CLOSE_HOUR)); wd: list[Any]=data.get("workdays",[])
                 if not (0<=oh<ch<=23) or not isinstance(wd,list) or any(int(x) not in range(7) for x in wd): return send(self,400,{"error":"Paramètres horaires invalides."})
                 c=db(); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('open_hour',?)",(str(oh),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('close_hour',?)",(str(ch),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('workdays',?)",(",".join(str(int(x)) for x in sorted(set(wd))),)); c.commit(); c.close()
                 return send(self,200,admin_settings())
             if path=="/api/admin/blocks":
                 if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
-                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}"); day=clean(data.get("date"),10); blocked=bool(data.get("blocked",True))
+                n=int(self.headers.get("Content-Length","0")); data: dict[str, Any]=json.loads(self.rfile.read(n) or b"{}"); day=clean(data.get("date"),10); blocked=bool(data.get("blocked",True))
                 if not valid_date(day): return send(self,400,{"error":"Date invalide."})
                 c=db()
                 if blocked: c.execute("INSERT OR IGNORE INTO blocked_days(day) VALUES(?)",(day,))
@@ -112,7 +112,7 @@ class Handler(SimpleHTTPRequestHandler):
                 booking_id=path.rsplit("/",1)[-1]
                 if not booking_id.isdigit():
                     return send(self,400,{"error":"Identifiant invalide."})
-                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
+                n=int(self.headers.get("Content-Length","0")); data: dict[str, Any]=json.loads(self.rfile.read(n) or b"{}")
                 status=clean(data.get("status"),30)
                 if status not in {"Confirmée","En attente","Terminée","Annulée"}:
                     return send(self,400,{"error":"Statut invalide."})
@@ -120,7 +120,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if cur.rowcount==0: return send(self,404,{"error":"Rendez-vous introuvable."})
                 return send(self,200,{"ok":True,"status":status})
             if path!="/api/bookings": return send(self,404,{"error":"Endpoint inconnu."})
-            n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
+            n=int(self.headers.get("Content-Length","0")); data: dict[str, Any]=json.loads(self.rfile.read(n) or b"{}")
             name=clean(data.get("name"),120); phone=clean(data.get("phone"),40); email=clean(data.get("email"),120)
             service=clean(data.get("service"),80); notes=clean(data.get("notes"),500); day=clean(data.get("date"),10); st=clean(data.get("time"),5)
             if not name or not phone: return send(self,400,{"error":"Nom et téléphone obligatoires."})
@@ -137,7 +137,7 @@ class Handler(SimpleHTTPRequestHandler):
                 c.close(); return send(self,409,{"error":"Ce créneau vient d'être réservé. Choisissez-en un autre."})
             c.execute("INSERT INTO bookings(name,phone,email,service,notes,booking_date,start_time,duration,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
                 (name,phone,email,service,notes,day,st,duration,datetime.now().isoformat(timespec="seconds"))); c.commit()
-            bid=c.execute("SELECT last_insert_rowid()").fetchone()[0]; c.close()
+            bid=int(c.execute("SELECT last_insert_rowid()").fetchone()[0]); c.close()
             return send(self,201,{"ok":True,"id":bid,"message":"Votre rendez-vous est enregistré."})
         except json.JSONDecodeError: return send(self,400,{"error":"Données JSON invalides."})
         except Exception as e: return send(self,500,{"error":"Impossible d'enregistrer le rendez-vous.","detail":str(e)})
