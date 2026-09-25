@@ -597,71 +597,40 @@
 
 
     <!-- =========================================================
-         ASSISTANT
+         ASSISTANT PEREZELECC — DIFY LOCAL
          =========================================================
-
-         Le bouton est prêt pour une future connexion Dify.
-
-         IMPORTANT :
-         Ne place pas une clé API Dify dans ce fichier.
-         Pour une connexion réelle, utilise un backend.
+         Le chatbot est fourni par Dify, installé localement.
+         Aucun appel à une API cloud n'est effectué ici.
          ========================================================= -->
 
-    <button
-        id="chat-button"
-        class="chat-button"
-        aria-label="Ouvrir l'assistant PEREZELECC"
-    >
-        ✦
-    </button>
+    <script>
+      window.difyChatbotConfig = {
+        token: 'G5rraml1Dai9Jys8',
+        baseUrl: 'http://localhost'
+      };
+    </script>
 
+    <script
+      src="http://localhost/embed.min.js"
+      id="G5rraml1Dai9Jys8"
+      defer>
+    </script>
 
-    <div id="chat-modal" class="chat-modal">
+    <style>
+      #dify-chatbot-bubble-button {
+        background-color: #e6c98f !important;
+        color: #1b1b1b !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,.18) !important;
+      }
 
-        <div class="chat-window">
-
-            <div class="chat-header">
-                <div>
-                    <strong>Assistant PEREZELECC</strong>
-                    <small>Votre projet électrique</small>
-                </div>
-
-                <button id="chat-close" aria-label="Fermer">
-                    ×
-                </button>
-            </div>
-
-
-            <div id="chat-messages" class="chat-messages">
-
-                <div class="chat-message bot">
-                    Bonjour 👋<br>
-                    Décrivez-moi votre projet électrique et je vous
-                    aiderai à préparer votre demande.
-                </div>
-
-            </div>
-
-
-            <div class="chat-input">
-
-                <input
-                    id="chat-input"
-                    type="text"
-                    placeholder="Décrivez votre projet..."
-                    autocomplete="off"
-                >
-
-                <button id="chat-send" aria-label="Envoyer">
-                    →
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
+      #dify-chatbot-bubble-window {
+        width: min(24rem, calc(100vw - 2rem)) !important;
+        height: min(40rem, calc(100vh - 2rem)) !important;
+        max-height: calc(100vh - 2rem) !important;
+        border-radius: 16px !important;
+        overflow: hidden !important;
+      }
+    </style>
 
     <script src="js/script.js"></script>
 
