@@ -99,7 +99,7 @@
 
 
             <!-- CTA -->
-            <a class="header-cta" href="reservation.html">
+            <a class="header-cta" href="#rendez-vous">
                PRENDRE RENDEZ-VOUS
             </a>
 
@@ -123,7 +123,7 @@
             <a href="#methode">Méthode</a>
             <a href="#zone">Zone d'intervention</a>
             <a href="#realisations">Réalisations</a>
-            <a href="reservation.html">Prendre rendez-vous</a>
+            <a href="#rendez-vous">Prendre rendez-vous</a>
         </div>
 
     </header>
@@ -167,7 +167,7 @@
 
                 <div class="hero-actions">
 
-                    <a class="button button-gold" href="reservation.html">
+                    <a class="button button-gold" href="#rendez-vous">
                         PRENDRE RENDEZ-VOUS
                         <span>→</span>
                     </a>
@@ -279,8 +279,16 @@
                         </label>
                         <div class="booking-home-duration"><small>DURÉE ESTIMÉE</small><strong id="home-booking-duration">—</strong></div>
                         <div class="booking-home-slots-wrap"><small>HORAIRES DISPONIBLES</small><div id="home-booking-slots" class="booking-home-slots">Sélectionnez une date.</div></div>
-                        <div id="home-booking-message" class="booking-home-message" aria-live="polite"></div>
-                        <a id="home-booking-continue" class="button button-gold booking-home-continue" href="reservation.html">CONTINUER LA RÉSERVATION <span>→</span></a>
+                        <form id="home-booking-form" class="booking-home-form">
+                            <div class="booking-home-contact-grid">
+                                <label>Nom / entreprise<input id="home-booking-name" required></label>
+                                <label>Téléphone<input id="home-booking-phone" type="tel" required></label>
+                                <label>Email<input id="home-booking-email" type="email"></label>
+                            </div>
+                            <label>Précisions<textarea id="home-booking-notes" rows="3" placeholder="Adresse, nature du problème…"></textarea></label>
+                            <div id="home-booking-message" class="booking-home-message" aria-live="polite"></div>
+                            <button id="home-booking-confirm" class="button button-gold booking-home-continue disabled" type="submit">CONFIRMER LE RENDEZ-VOUS <span>→</span></button>
+                        </form>
                     </div>
                 </div>
             </div>
