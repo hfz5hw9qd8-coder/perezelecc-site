@@ -45,7 +45,7 @@ mobileMenuButton.addEventListener("click", function () {
 });
 
 
-/* Fermer le menu après un clic */
+/* Fermer le menu après clic */
 document.querySelectorAll("#mobile-menu a").forEach(function (link) {
 
     link.addEventListener("click", function () {
