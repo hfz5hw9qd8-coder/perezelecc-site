@@ -39,6 +39,7 @@
     }));
   }
   async function connect(){
+    key=keyInput.value.trim();
     loginBtn.disabled=true; loginBtn.textContent='CONNEXION…'; loginMsg.textContent='';
     try{
       const bookings=await getBookings();
