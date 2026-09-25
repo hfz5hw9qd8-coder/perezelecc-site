@@ -1,0 +1,1495 @@
+/* ============================================================
+   PEREZELECC — STYLE PRINCIPAL
+   ============================================================
+
+   PALETTE DE MARQUE
+   ------------------------------------------------------------
+   Crème       : #F4EFE3
+   Sable       : #D9C6A0
+   Bronze      : #B98A4B
+   Anthracite  : #101714
+   Vert sombre : #1D2923
+   Blanc       : #FFFFFF
+
+   Si tu veux modifier les couleurs du site, commence ici.
+   ============================================================ */
+
+:root {
+    --cream: #f4efe3;
+    --cream-dark: #e8dfce;
+    --sand: #d9c6a0;
+    --gold: #c59a58;
+    --gold-light: #e6c98f;
+
+    --ink: #101714;
+    --ink-soft: #1b2520;
+    --olive: #27332c;
+
+    --white: #ffffff;
+    --muted: #6d716a;
+    --line: rgba(16, 23, 20, 0.14);
+
+    --container: 1860px;
+    --radius: 18px;
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--cream);
+    font-family: "DM Sans", Arial, sans-serif;
+}
+
+body,
+button,
+input {
+    font-family: "DM Sans", Arial, sans-serif;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+.container {
+    width: min(var(--container), 92%);
+    margin-inline: 100px;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 100;
+
+    background: rgba(236, 226, 210);
+    border-bottom: 1px solid rgba(16, 23, 20, 0.10);
+
+    backdrop-filter: blur(16px);
+}
+
+.header-inner {
+    min-height: 108px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+
+/* Logo */
+.brand {
+    display: flex;
+    align-items: center;
+    min-width: 290px;
+    height: 108px;
+}
+
+.brand-mark {
+    width: 74px;
+    height: 52px;
+
+    color: var(--ink);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.brand-text strong {
+    font-family: "DM Sans", Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+}
+
+.brand-text strong span {
+    color: var(--gold);
+}
+
+.brand-text small {
+    font-size: 8px;
+    letter-spacing: 0.38em;
+    text-align: center;
+}
+
+.brand-text em {
+    color: #77766e;
+    font-size: 6px;
+    font-style: normal;
+    letter-spacing: 0.22em;
+    text-align: center;
+}
+
+
+/* Menu */
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+
+    font-size: 13px;
+}
+
+.main-nav a {
+    position: relative;
+    padding: 12px 0;
+}
+
+.main-nav a::after {
+    content: "";
+
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    left: 0;
+
+    height: 1px;
+
+    background: var(--ink);
+
+    transform: scaleX(0);
+    transform-origin: right;
+
+    transition: transform 180ms ease;
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+
+/* CTA header */
+.header-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 20px;
+
+    border-radius: 999px;
+
+    background: var(--ink);
+    color: var(--white);
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.header-cta b {
+    color: var(--gold-light);
+    font-size: 17px;
+}
+
+
+/* Menu mobile */
+.mobile-menu-button {
+    display: none;
+
+    border: 0;
+    background: transparent;
+
+    font-size: 24px;
+}
+
+.mobile-menu {
+    display: none;
+}
+
+
+/* ============================================================
+   BOUTONS
+   ============================================================ */
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    min-height: 48px;
+    padding: 13px 21px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+
+    transition:
+        transform 180ms ease,
+        background 180ms ease,
+        color 180ms ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.button-gold {
+    background: var(--gold-light);
+    color: var(--ink);
+}
+
+.button-outline {
+    border: 1px solid rgba(255,255,255,0.70);
+    color: var(--white);
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+    min-height: clamp(620px, calc(100svh - 108px), 760px);
+
+    position: relative;
+
+    display: flex;
+    align-items: flex-end;
+
+    padding-top: 108px;
+
+    overflow: hidden;
+
+    background: var(--ink);
+    color: var(--white);
+}
+
+
+/*
+    Image de fond.
+    Le visuel généré sert ici de démonstration.
+*/
+.hero-background {
+    position: absolute;
+    inset: 0;
+    background: url("../assets/hero-mediterranean.jpg") center center / cover no-repeat;
+}
+
+
+
+/* Voile sombre */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(7,13,11,.84) 0%, rgba(7,13,11,.46) 40%, rgba(7,13,11,.08) 74%, rgba(7,13,11,.24) 100%),
+        linear-gradient(180deg, rgba(7,13,11,.06) 0%, rgba(7,13,11,.04) 58%, rgba(7,13,11,.36) 100%);
+}
+
+
+/* Contenu */
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+
+    padding-top: 72px;
+    padding-bottom: 112px;
+}
+
+.eyebrow {
+    margin: 0 0 17px;
+
+    color: var(--gold-light);
+
+    font-size: 11px;
+    letter-spacing: 0.31em;
+    font-weight: 600;
+}
+
+.hero h1 {
+    max-width: 720px;
+
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(54px, 7vw, 92px);
+    font-weight: 600;
+
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+}
+
+.hero h1 span {
+    color: var(--gold-light);
+}
+
+.hero-description {
+    max-width: 600px;
+
+    margin: 22px 0 0;
+
+    color: rgba(255,255,255,0.91);
+
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    margin-top: 28px;
+}
+
+.territory-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 32px;
+
+    font-size: 10px;
+    letter-spacing: 0.22em;
+}
+
+.location-pin {
+    color: var(--gold-light);
+}
+
+
+/* Bandeau du hero */
+.hero-services {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+
+    background: rgba(10, 17, 14, 0.93);
+    border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.hero-services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.quick-service {
+    min-height: 70px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 15px 22px;
+
+    border-right: 1px solid rgba(255,255,255,0.16);
+}
+
+.quick-service:last-child {
+    border-right: 0;
+}
+
+.quick-icon {
+    color: var(--gold-light);
+    font-size: 27px;
+}
+
+.quick-service strong,
+.quick-service small {
+    display: block;
+}
+
+.quick-service strong {
+    font-size: 11px;
+    letter-spacing: 0.07em;
+}
+
+.quick-service small {
+    margin-top: 4px;
+
+    color: #aeb5ae;
+
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+.section {
+    padding: 95px 0;
+}
+
+.section-cream {
+    background: var(--cream);
+    color: var(--ink);
+}
+
+.section-topline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.section-topline span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+}
+
+.section-topline i {
+    width: 48px;
+    height: 1px;
+
+    background: var(--gold);
+
+    display: block;
+}
+
+.section-topline small {
+    margin-left: auto;
+
+    color: #777b73;
+
+    font-size: 9px;
+    letter-spacing: 0.16em;
+}
+
+
+/* ============================================================
+   SERVICES
+   ============================================================ */
+
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+}
+
+.service-card {
+    overflow: hidden;
+
+    background: #fffdf8;
+
+    border: 1px solid rgba(16,23,20,0.08);
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 25px rgba(36,29,18,0.06);
+
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 20px 40px rgba(36,29,18,0.12);
+}
+
+.service-image {
+    height: 205px;
+
+    background-size: cover;
+    background-position: center;
+}
+
+
+/*
+    Les 4 images utilisent différentes zones du visuel de
+    démonstration pour donner un rendu "galerie".
+
+    Pour une vraie version commerciale, remplace ces images
+    par 4 photos de tes propres réalisations.
+*/
+.service-image-1 {
+    position: relative;
+    overflow: hidden;
+    background: #e9dfcd;
+}
+
+.service-image-1 img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.service-image-2 {
+    position: relative;
+    overflow: hidden;
+    background: #e9dfcd;
+}
+
+.service-image-2 img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.service-image-3 {
+    position: relative;
+    overflow: hidden;
+    background: #e9dfcd;
+}
+
+.service-image-3 img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.service-image-4 {
+    position: relative;
+    overflow: hidden;
+    background: #e9dfcd;
+}
+
+.service-image-4 img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+
+.service-content {
+    min-height: 155px;
+
+    display: grid;
+    grid-template-columns: 36px 1fr 34px;
+    gap: 10px;
+
+    align-items: start;
+
+    padding: 21px;
+}
+
+.service-symbol {
+    color: var(--gold);
+
+    font-size: 27px;
+}
+
+.service-content h2 {
+    margin: 0 0 7px;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.service-content p {
+    margin: 0;
+
+    color: #777a73;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.service-content > a {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #eee2c7;
+
+    font-size: 17px;
+}
+
+
+/* ============================================================
+   À PROPOS / MÉTHODE
+   ============================================================ */
+
+.about-section {
+    position: relative;
+
+    overflow: hidden;
+
+    background: var(--ink);
+    color: var(--white);
+}
+
+.about-background {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 14, 12, 0.88) 0%,
+            rgba(8, 14, 12, 0.66) 34%,
+            rgba(8, 14, 12, 0.34) 68%,
+            rgba(8, 14, 12, 0.22) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(8, 14, 12, 0.18) 0%,
+            rgba(8, 14, 12, 0.48) 100%
+        ),
+        url("../assets/about-landscape-clean.jpg") center / cover no-repeat;
+
+    opacity: 1;
+}
+
+.about-grid {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 70px;
+
+    align-items: center;
+}
+
+.section-topline-light {
+    color: var(--white);
+}
+
+.about-copy h2 {
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(40px, 5vw, 68px);
+    line-height: 1.00;
+}
+
+.about-copy h2 span {
+    color: var(--gold-light);
+}
+
+.about-copy p {
+    max-width: 580px;
+
+    margin: 25px 0;
+
+    color: #d0d3ce;
+
+    line-height: 1.7;
+}
+
+.values-list {
+    display: grid;
+    gap: 28px;
+}
+
+.value-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.value-item > span {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--gold-light);
+
+    border: 1px solid rgba(230,201,143,0.40);
+    border-radius: 50%;
+}
+
+.value-item strong,
+.value-item small {
+    display: block;
+}
+
+.value-item strong {
+    font-size: 12px;
+    letter-spacing: 0.10em;
+}
+
+.value-item small {
+    margin-top: 5px;
+
+    color: #aeb5ae;
+
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   ZONE
+   ============================================================ */
+
+.zone-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 60px;
+
+    align-items: end;
+}
+
+.zone-grid h2 {
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 1.00;
+}
+
+.zone-grid h2 em,
+.section-heading-centered h2 em {
+    color: var(--gold);
+    font-style: normal;
+}
+
+.zone-copy {
+    padding-bottom: 6px;
+}
+
+.zone-copy p {
+    margin: 0;
+
+    color: #696d66;
+
+    line-height: 1.75;
+}
+
+.zone-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-top: 22px;
+}
+
+.zone-tags span {
+    padding: 9px 13px;
+
+    border: 1px solid #d2c7b2;
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+}
+
+
+/* ============================================================
+   RÉALISATIONS
+   ============================================================ */
+
+.realizations-section {
+    padding-top: 0;
+}
+
+.section-heading-centered {
+    max-width: 720px;
+
+    margin: 0 auto 40px;
+
+    text-align: center;
+}
+
+.section-heading-centered .section-topline {
+    justify-content: center;
+}
+
+.section-heading-centered h2 {
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(42px, 5vw, 66px);
+    line-height: 1.0;
+}
+
+.section-heading-centered p {
+    color: #74776f;
+
+    line-height: 1.65;
+}
+
+.realizations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.realization {
+    position: relative;
+
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+
+    overflow: hidden;
+
+    border-radius: var(--radius);
+
+    background: var(--ink);
+}
+
+.realization-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: var(--ink);
+
+    transition: transform 500ms ease;
+}
+
+/* Les photos doivent remplir toute la carte.
+   Sans ces règles, le navigateur affichait seulement
+   la petite taille native des anciennes images. */
+.realization-image img {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+
+
+
+.realization:hover .realization-image {
+    transform: scale(1.04);
+}
+
+.realization-caption {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    left: 18px;
+
+    padding: 15px;
+
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 12px;
+
+    background: rgba(12,17,14,0.72);
+    color: white;
+
+    backdrop-filter: blur(10px);
+}
+
+.realization-caption strong,
+.realization-caption span {
+    display: block;
+}
+
+.realization-caption strong {
+    font-size: 13px;
+}
+
+.realization-caption span {
+    margin-top: 4px;
+
+    color: #d2d4cf;
+
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+
+.contact-section {
+    padding-top: 35px;
+    padding-bottom: 95px;
+
+    background: var(--cream);
+}
+
+.contact-box {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+
+    gap: 65px;
+
+    padding: 44px 50px;
+
+    border-radius: 22px;
+
+    background: #e9e0cf;
+
+    border: 1px solid rgba(16,23,20,0.08);
+}
+
+.contact-heading h2 {
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(50px, 6vw, 76px);
+
+    line-height: 0.94;
+}
+
+.contact-heading h2 em {
+    color: var(--gold);
+    font-style: normal;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-details p {
+    max-width: 480px;
+
+    color: #656961;
+
+    line-height: 1.7;
+}
+
+.contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.contact-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 15px 20px;
+
+    border: 1px solid #d0c5b0;
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.50);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.contact-button-dark {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.site-footer {
+    padding: 28px 0;
+
+    background: var(--ink);
+    color: #d6d7d3;
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+
+    align-items: center;
+    gap: 25px;
+}
+
+.footer-brand strong {
+    display: block;
+
+    font-size: 18px;
+    letter-spacing: 0.12em;
+}
+
+.footer-brand strong span {
+    color: var(--gold-light);
+}
+
+.footer-brand small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #89918a;
+
+    font-size: 8px;
+    letter-spacing: 0.18em;
+}
+
+.footer-links {
+    display: flex;
+    gap: 22px;
+
+    color: #aab0aa;
+
+    font-size: 11px;
+}
+
+.footer-copy {
+    justify-self: end;
+
+    color: #858d86;
+
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   CHATBOT
+   ============================================================ */
+
+.chat-button {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 150;
+
+    width: 58px;
+    height: 58px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: var(--gold-light);
+    color: var(--ink);
+
+    font-size: 22px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.24);
+}
+
+.chat-modal {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    padding: 22px;
+
+    background: rgba(0,0,0,0.55);
+}
+
+.chat-modal.open {
+    display: flex;
+}
+
+.chat-window {
+    width: min(390px, 100%);
+    height: 520px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: var(--cream);
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 17px 18px;
+
+    background: var(--ink);
+    color: white;
+}
+
+.chat-header strong,
+.chat-header small {
+    display: block;
+}
+
+.chat-header strong {
+    font-size: 14px;
+}
+
+.chat-header small {
+    margin-top: 4px;
+
+    color: #b9c0ba;
+
+    font-size: 10px;
+}
+
+.chat-header button {
+    border: 0;
+    background: transparent;
+
+    color: white;
+
+    font-size: 24px;
+}
+
+.chat-messages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 16px;
+
+    background: #f6f1e6;
+}
+
+.chat-message {
+    max-width: 85%;
+
+    margin: 8px 0;
+    padding: 12px 14px;
+
+    border-radius: 13px;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.chat-message.bot {
+    background: white;
+    border: 1px solid #ded6c8;
+}
+
+.chat-message.user {
+    margin-left: auto;
+
+    background: var(--gold-light);
+}
+
+.chat-input {
+    display: flex;
+    gap: 7px;
+
+    padding: 11px;
+
+    border-top: 1px solid #d8cfbf;
+
+    background: var(--cream);
+}
+
+.chat-input input {
+    flex: 1;
+    min-width: 0;
+
+    padding: 12px;
+
+    border: 1px solid #d2c7b5;
+    border-radius: 10px;
+
+    background: white;
+
+    outline: none;
+}
+
+.chat-input button {
+    width: 45px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: var(--ink);
+    color: white;
+
+    font-size: 20px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+    .main-nav {
+        gap: 17px;
+    }
+
+    .brand {
+        min-width: auto;
+    }
+
+    .header-cta {
+        padding-inline: 14px;
+    }
+
+    .service-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-service:nth-child(2) {
+        border-right: 0;
+    }
+
+    .about-grid {
+        gap: 45px;
+    }
+
+}
+
+
+@media (max-width: 780px) {
+
+    .header-inner {
+        min-height: 75px;
+    }
+
+    .main-nav,
+    .header-cta {
+        display: none;
+    }
+
+    .mobile-menu-button {
+        display: block;
+    }
+
+    .mobile-menu {
+        display: none;
+
+        padding: 10px 4% 18px;
+
+        background: var(--cream);
+
+        border-top: 1px solid var(--line);
+    }
+
+    .mobile-menu.open {
+        display: grid;
+    }
+
+    .mobile-menu a {
+        padding: 14px 0;
+
+        border-bottom: 1px solid var(--line);
+
+        font-size: 14px;
+    }
+
+    .brand {
+        gap: 4px;
+    }
+
+    .brand-mark {
+        width: 57px;
+        height: 43px;
+    }
+
+    .brand-text strong {
+        font-size: 18px;
+    }
+
+    .brand-text small {
+        font-size: 7px;
+    }
+
+    .brand-text em {
+        font-size: 5px;
+    }
+
+
+    .hero {
+        min-height: 760px;
+    }
+
+    .hero-content {
+        padding-bottom: 245px;
+    }
+
+    .hero h1 {
+        font-size: clamp(48px, 14vw, 70px);
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .hero-services-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quick-service {
+        min-height: 68px;
+
+        padding: 12px 10px;
+
+        border-right: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .quick-service:nth-child(even) {
+        border-right: 0;
+    }
+
+    .quick-service strong {
+        font-size: 9px;
+    }
+
+    .quick-service small {
+        font-size: 9px;
+    }
+
+    .quick-icon {
+        font-size: 21px;
+    }
+
+
+    .section {
+        padding: 70px 0;
+    }
+
+    .section-topline {
+        align-items: flex-start;
+    }
+
+    .section-topline small {
+        display: none;
+    }
+
+    .service-grid,
+    .realizations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-image {
+        height: 210px;
+    }
+
+    .realization {
+        aspect-ratio: 16 / 10;
+    }
+
+    .about-grid,
+    .zone-grid,
+    .contact-box {
+        grid-template-columns: 1fr;
+    }
+
+    .about-grid {
+        gap: 55px;
+    }
+
+    .zone-grid {
+        gap: 30px;
+    }
+
+    .contact-box {
+        gap: 30px;
+
+        padding: 30px 24px;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+    }
+
+    .footer-copy {
+        justify-self: start;
+    }
+
+    .chat-modal {
+        padding: 10px;
+    }
+
+    .chat-window {
+        height: min(560px, 86vh);
+    }
+}
+
+
+/* =========================================================
+   LOGO FINAL
+   ---------------------------------------------------------
+   Image correspondant au logo du design sélectionné.
+   Modifier uniquement la largeur si sa taille doit changer.
+   ========================================================= */
+.brand-logo-image {
+    display: block;
+    width: 260px;
+    height: 92px;
+    object-fit: contain;
+    object-position: left center;
+    mix-blend-mode: normal;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 760px) {
+    .brand-logo-image {
+        width: 175px;
+    }
+}
+
+/* Réalisations : trois cartes de même largeur et de même ratio */
+.realization-large {
+    min-height: 0;
+}

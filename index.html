@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- =========================================================
+         PEREZELECC — SITE VITRINE
+         ---------------------------------------------------------
+         Version : identité Gard / Arles / Alpilles
+         Téléphone : 07 66 20 84 79
+         Email : mathieuperez07@icloud.com
+
+         STRUCTURE DU PROJET
+         - index.html       = contenu
+         - css/style.css    = design
+         - js/script.js     = interactions
+         - assets/          = images et logo
+
+         NOTE :
+         Les images de démonstration sont des visuels locaux.
+         Remplace-les par tes vraies photos de chantier avant
+         publication.
+         ========================================================= -->
+
+    <title>PEREZELECC — Électricien | Gard · Arles · Alpilles</title>
+
+    <meta
+        name="description"
+        content="PEREZELECC — Électricien dans le Gard, à Arles et dans les Alpilles. Installation, rénovation, dépannage et mise en conformité."
+    >
+
+    <!-- Polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Feuille de style -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Favicon : remplace ce fichier par ton logo final -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+    <header class="site-header">
+
+        <div class="container header-inner">
+            <!--
+                LOGO FINAL
+                -------------------------------------------------
+                Repris du design sélectionné.
+                Pour le remplacer plus tard :
+                assets/logo-selection-exact.png
+            -->
+            <a href="#accueil" class="brand" aria-label="PEREZELECC - Accueil">
+                <img class="brand-logo-image" src="assets/logo-selected-transparent.png" alt="PEREZELECC — Électricien — Gard · Arles · Alpilles">
+            </a>
+
+
+            <!-- Menu -->
+            <nav class="main-nav" aria-label="Navigation principale">
+                <a href="#accueil" class="active">Accueil</a>
+                <a href="#services">Services</a>
+                <a href="#methode">Méthode</a>
+                <a href="#zone">Zone d'intervention</a>
+                <a href="#realisations">Réalisations</a>
+            </nav>
+
+
+            <!-- CTA -->
+            <a class="header-cta" href="#contact">
+               DEMANDER UN DEVIS
+            </a>
+
+
+            <!-- Menu mobile -->
+            <button
+                id="mobile-menu-button"
+                class="mobile-menu-button"
+                aria-label="Ouvrir le menu"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
+
+        </div>
+
+        <!-- Navigation mobile -->
+        <div id="mobile-menu" class="mobile-menu">
+            <a href="#accueil">Accueil</a>
+            <a href="#services">Services</a>
+            <a href="#methode">Méthode</a>
+            <a href="#zone">Zone d'intervention</a>
+            <a href="#realisations">Réalisations</a>
+            <a href="#contact">Demander un devis</a>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+        <section id="accueil" class="hero">
+
+            <!--
+                HERO
+                -------------------------------------------------
+                Le fond est construit en CSS pour éviter l'effet
+                "capture d'écran dans la capture d'écran".
+
+                Pour la version finale, une vraie photo de chantier
+                pourra être ajoutée dans .hero-background.
+            -->
+            <div class="hero-background" aria-hidden="true"></div>
+
+            <div class="hero-overlay"></div>
+
+            <div class="container hero-content">
+
+                <p class="eyebrow">
+                    ÉLECTRICITÉ · RÉNOVATION · DÉPANNAGE
+                </p>
+
+                <h1>
+                    Vos projets<br>
+                    <span>en toute confiance.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Installation, rénovation, dépannage et mise en conformité
+                    dans le Gard, à Arles et dans les Alpilles.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a class="button button-gold" href="#contact">
+                        DEMANDER UN DEVIS
+                        <span>→</span>
+                    </a>
+
+                    <a class="button button-outline" href="#realisations">
+                        NOS RÉALISATIONS
+                        <span>↗</span>
+                    </a>
+
+                </div>
+
+                <div class="territory-note">
+                    <span class="location-pin">●</span>
+                    <span>GARD · ARLES · ALPILLES</span>
+                </div>
+
+            </div>
+
+
+            <!-- Bandeau prestations -->
+            <div class="hero-services">
+
+                <div class="container hero-services-grid">
+
+                    <div class="quick-service">
+                        <span class="quick-icon"><img width="40" height="40" src="https://img.icons8.com/3d-fluency/94/structural.png" alt="structural"/></span>
+                        <div>
+                            <strong>PARTICULIERS</strong>
+                            <small>Maisons & appartements</small>
+                        </div>
+                    </div>
+
+                    <div class="quick-service">
+                        <span class="quick-icon"><img width="40" height="40" src="https://img.icons8.com/liquid-glass/48/worker-male.png" alt="worker-male"/></span>
+                        <div>
+                            <strong>PROFESSIONNELS</strong>
+                            <small>Locaux & bureaux</small>
+                        </div>
+                    </div>
+
+                    <div class="quick-service">
+                        <span class="quick-icon"><img width="40" height="40" src="https://img.icons8.com/fluency/48/electricity-hazard.png" alt="electricity-hazard"/></span>
+                        <div>
+                            <strong>MISE EN CONFORMITÉ</strong>
+                            <small>Sécurité & normes</small>
+                        </div>
+                    </div>
+
+                    <div class="quick-service">
+                        <span class="quick-icon"><img width="40" height="40" src="https://img.icons8.com/fluency/48/job.png" alt="job"/></span>
+                        <div>
+                            <strong>DÉPANNAGE</strong>
+                            <small>Intervention rapide</small>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SERVICES
+             ===================================================== -->
+        <section id="services" class="section section-cream">
+
+            <div class="container">
+
+                <div class="section-topline">
+                    <span>NOS SERVICES</span>
+                    <i></i>
+                    <small>DES SOLUTIONS DURABLES ET ADAPTÉES À VOS BESOINS</small>
+                </div>
+
+
+                <div class="service-grid">
+
+                    <article class="service-card">
+                        <div class="service-image service-image-1"><img src="assets/service-installation.jpg" alt="" loading="lazy"></div>
+
+                        <div class="service-content">
+                            <span class="service-symbol"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/FAB005/flash-on.png" alt="flash-on"/></span>
+
+                            <div>
+                                <h2>Installation électrique</h2>
+                                <p>
+                                    Construire, agrandir, aménager en toute sérénité.
+                                </p>
+                            </div>
+
+                            <a href="#contact" aria-label="Installation électrique">
+                                →
+                            </a>
+                        </div>
+                    </article>
+
+
+                    <article class="service-card">
+                        <div class="service-image service-image-2"><img src="assets/service-renovation.jpg" alt="" loading="lazy"></div>
+
+                        <div class="service-content">
+                            <span class="service-symbol"><img width="40" height="40" src="https://img.icons8.com/color/48/maintenance.png" alt="maintenance"/></span>
+
+                            <div>
+                                <h2>Rénovation électrique</h2>
+                                <p>
+                                    Modernisez vos installations et gagnez en confort.
+                                </p>
+                            </div>
+
+                            <a href="#contact" aria-label="Rénovation électrique">
+                                →
+                            </a>
+                        </div>
+                    </article>
+
+
+                    <article class="service-card">
+                        <div class="service-image service-image-3"><img src="assets/service-conformity.jpg" alt="" loading="lazy"></div>
+
+                        <div class="service-content">
+                            <span class="service-symbol">✓</span>
+
+                            <div>
+                                <h2>Mise en conformité</h2>
+                                <p>
+                                    Des installations sûres, aux normes en vigueur.
+                                </p>
+                            </div>
+
+                            <a href="#contact" aria-label="Mise en conformité">
+                                →
+                            </a>
+                        </div>
+                    </article>
+
+
+                    <article class="service-card">
+                        <div class="service-image service-image-4"><img src="assets/service-charger.jpg" alt="" loading="lazy"></div>
+
+                        <div class="service-content">
+                            <span class="service-symbol"><img width="40" height="40" src="https://img.icons8.com/color/48/car-charger.png" alt="car-charger"/></span>
+
+                            <div>
+                                <h2>Bornes de recharge</h2>
+                                <p>
+                                    Solutions électriques pour véhicules.
+                                </p>
+                            </div>
+
+                            <a href="#contact" aria-label="Bornes de recharge">
+                                →
+                            </a>
+                        </div>
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MÉTHODE / À PROPOS
+             ===================================================== -->
+        <section id="methode" class="section about-section">
+
+            <div class="about-background" aria-hidden="true"></div>
+
+            <div class="container about-grid">
+
+                <div class="about-copy">
+
+                    <div class="section-topline section-topline-light">
+                        <span>À PROPOS</span>
+                        <i></i>
+                    </div>
+
+                    <h2>
+                        Un artisan électricien<br>
+                        <span>proche de chez vous.</span>
+                    </h2>
+
+                    <p>
+                        Basé dans le Gard, j'interviens à Arles, dans les Alpilles
+                        et leurs alentours pour tous vos projets électriques.
+                        Un accompagnement personnalisé, un travail soigné et
+                        un vrai sens du service.
+                    </p>
+
+                    <a class="button button-gold" href="#contact">
+                        EN SAVOIR PLUS
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+
+                <div class="values-list">
+
+                    <div class="value-item">
+                        <span><img width="35" height="35" src="https://img.icons8.com/fluency-systems-filled/48/e6c98f/teamwork.png" alt="teamwork"/></span>
+                        <div>
+                            <strong>ÉCOUTE</strong>
+                            <small>Un accompagnement sur mesure</small>
+                        </div>
+                    </div>
+
+                    <div class="value-item">
+                        <span><img width="35" height="35" src="https://img.icons8.com/isometric-line/50/e6c98f/good-quality.png" alt="good-quality"/></span>
+                        <div>
+                            <strong>QUALITÉ</strong>
+                            <small>Un travail soigné et durable</small>
+                        </div>
+                    </div>
+
+                    <div class="value-item">
+                        <span><img width="35" height="35" src="https://img.icons8.com/isometric-line/50/e6c98f/address.png" alt="address"/></span>
+                        <div>
+                            <strong>PROXIMITÉ</strong>
+                            <small>Une intervention locale et réactive</small>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ZONE
+             ===================================================== -->
+        <section id="zone" class="section section-cream zone-section">
+
+            <div class="container zone-grid">
+
+                <div>
+                    <div class="section-topline">
+                        <span>ZONE D'INTERVENTION</span>
+                        <i></i>
+                    </div>
+
+                    <h2>
+                        Un électricien<br>
+                        <em>ancré dans son territoire.</em>
+                    </h2>
+                </div>
+
+                <div class="zone-copy">
+
+                    <p>
+                        PEREZELECC intervient dans le Gard, à Arles et
+                        dans les Alpilles pour vos travaux d'installation,
+                        de rénovation et de dépannage.
+                    </p>
+
+                    <div class="zone-tags">
+                        <span>GARD</span>
+                        <span>ARLES</span>
+                        <span>ALPILLES</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RÉALISATIONS
+             ===================================================== -->
+        <section id="realisations" class="section section-cream realizations-section">
+
+            <div class="container">
+
+                <div class="section-heading-centered">
+                    <div class="section-topline">
+                        <span>NOS RÉALISATIONS</span>
+                        <i></i>
+                    </div>
+
+                    <h2>
+                        Des installations<br>
+                        <em>pensées pour durer.</em>
+                    </h2>
+
+                    <p>
+                        Une sélection de projets et d'environnements
+                        représentatifs du savoir-faire PEREZELECC.
+                    </p>
+                </div>
+
+
+                <div class="realizations-grid">
+
+                    <article class="realization realization-large">
+                        <div class="realization-image realization-1"><img src="assets/realization-1.jpg" alt="" loading="lazy"></div>
+                        <div class="realization-caption">
+                            <strong>Rénovation complète</strong>
+                            <span>Installation électrique</span>
+                        </div>
+                    </article>
+
+                    <article class="realization">
+                        <div class="realization-image realization-2"><img src="assets/realization-2.png" alt="" loading="lazy"></div>
+                        <div class="realization-caption">
+                            <strong>Éclairage</strong>
+                            <span>Habitat</span>
+                        </div>
+                    </article>
+
+                    <article class="realization">
+                        <div class="realization-image realization-3"><img src="assets/realization-3.png" alt="" loading="lazy"></div>
+                        <div class="realization-caption">
+                            <strong>Équipement</strong>
+                            <span>Extérieur</span>
+                        </div>
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CONTACT / DEVIS
+             ===================================================== -->
+        <section id="contact" class="section contact-section">
+
+            <div class="container">
+
+                <div class="contact-box">
+
+                    <div class="contact-heading">
+                        <div class="section-topline">
+                            <span>UN PROJET ?</span>
+                            <i></i>
+                        </div>
+
+                        <h2>
+                            On en<br>
+                            <em>parle ?</em>
+                        </h2>
+                    </div>
+
+
+                    <div class="contact-details">
+
+                        <p>
+                            Un dépannage, une rénovation ou une nouvelle
+                            installation ? Envoyez-moi votre demande et
+                            décrivez votre projet.
+                        </p>
+
+                        <div class="contact-actions">
+
+                            <!--
+                                INFORMATIONS ENTREPRISE
+                                Téléphone : 07 66 20 84 79
+                            -->
+                            <a
+                                class="contact-button contact-button-dark"
+                                href="tel:+33766208479"
+                            >
+                                <span><img width="30" height="30" src="https://img.icons8.com/3d-fluency/94/phone.png" alt="phone"/></span>
+                                07 66 20 84 79
+                            </a>
+
+                            <!--
+                                INFORMATIONS ENTREPRISE
+                                Email : mathieuperez07@icloud.com
+                            -->
+                            <a
+                                class="contact-button"
+                                href="mailto:mathieuperez07@icloud.com"
+                            >
+                                <span><img width="30" height="30" src="https://img.icons8.com/3d-fluency/94/mail.png" alt="mail"/></span>
+                                mathieuperez07@icloud.com
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+    <footer class="site-footer">
+
+        <div class="container footer-inner">
+
+            <div class="footer-brand">
+                <strong>PEREZ<span>ELECC</span></strong>
+                <small>ÉLECTRICIEN · GARD · ARLES · ALPILLES</small>
+            </div>
+
+            <div class="footer-links">
+                <a href="#services">Services</a>
+                <a href="#zone">Zone</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="footer-copy">
+                © 2026 PEREZELECC
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================================
+         ASSISTANT
+         =========================================================
+
+         Le bouton est prêt pour une future connexion Dify.
+
+         IMPORTANT :
+         Ne place pas une clé API Dify dans ce fichier.
+         Pour une connexion réelle, utilise un backend.
+         ========================================================= -->
+
+    <button
+        id="chat-button"
+        class="chat-button"
+        aria-label="Ouvrir l'assistant PEREZELECC"
+    >
+        ✦
+    </button>
+
+
+    <div id="chat-modal" class="chat-modal">
+
+        <div class="chat-window">
+
+            <div class="chat-header">
+                <div>
+                    <strong>Assistant PEREZELECC</strong>
+                    <small>Votre projet électrique</small>
+                </div>
+
+                <button id="chat-close" aria-label="Fermer">
+                    ×
+                </button>
+            </div>
+
+
+            <div id="chat-messages" class="chat-messages">
+
+                <div class="chat-message bot">
+                    Bonjour 👋<br>
+                    Décrivez-moi votre projet électrique et je vous
+                    aiderai à préparer votre demande.
+                </div>
+
+            </div>
+
+
+            <div class="chat-input">
+
+                <input
+                    id="chat-input"
+                    type="text"
+                    placeholder="Décrivez votre projet..."
+                    autocomplete="off"
+                >
+
+                <button id="chat-send" aria-label="Envoyer">
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>
