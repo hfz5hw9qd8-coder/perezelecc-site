@@ -1518,3 +1518,55 @@ button {
 @media(max-width:600px){.booking-home{padding-top:65px;padding-bottom:70px}.booking-home-calendar{padding:28px 20px}.booking-home-details{padding:28px 20px}.booking-home-days button{width:34px;height:34px}.booking-home-monthbar h3{font-size:23px}.booking-home-brand{margin-bottom:35px}}
 
 .booking-home-form{margin-top:20px;padding-top:18px;border-top:1px solid #e1ded5}.booking-home-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.booking-home-form label{display:grid;gap:6px;color:#4f554f;font-size:11px;font-weight:700}.booking-home-form input,.booking-home-form textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #d9d5cc;border-radius:6px;background:#fff;color:var(--ink);font:inherit;font-size:12px;outline:none}.booking-home-form input:focus,.booking-home-form textarea:focus{border-color:var(--gold)}.booking-home-form textarea{resize:vertical}.booking-home-continue{border:0;cursor:pointer}.booking-home-continue.disabled{opacity:.45;pointer-events:none}.booking-home-message.error{color:#a44c45}@media(max-width:600px){.booking-home-contact-grid{grid-template-columns:1fr}}
+
+/* Champs de réservation — finition premium PEREZELECC */
+.booking-home-form{margin-top:24px;padding-top:22px;border-top:1px solid rgba(17,24,22,.10)}
+.booking-home-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.booking-home-form>label,.booking-home-contact-grid>label{display:grid;gap:7px;color:#59605a;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.booking-home-form input,
+.booking-home-form textarea,
+.booking-home-field select{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid #d7d2c7;
+  border-radius:8px;
+  background:#fdfbf6;
+  color:var(--ink);
+  font-family:inherit;
+  font-size:13px;
+  font-weight:500;
+  outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease,transform .2s ease;
+}
+.booking-home-form input{height:48px;padding:0 14px}
+.booking-home-form textarea{min-height:86px;padding:13px 14px;resize:vertical;line-height:1.5}
+.booking-home-field select{height:46px;padding:0 13px;cursor:pointer}
+.booking-home-form input::placeholder,
+.booking-home-form textarea::placeholder{color:#a7a49c;font-weight:400}
+.booking-home-form input:hover,
+.booking-home-form textarea:hover,
+.booking-home-field select:hover{border-color:#bbb5a8;background:#fffdf9}
+.booking-home-form input:focus,
+.booking-home-form textarea:focus,
+.booking-home-field select:focus{
+  border-color:var(--gold);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(201,164,91,.16),0 7px 18px rgba(30,25,18,.05);
+}
+.booking-home-field{position:relative}
+.booking-home-field select{appearance:none;padding-right:42px}
+.booking-home-field:after{
+  content:"⌄";
+  position:absolute;
+  right:15px;
+  bottom:13px;
+  color:#9b7a3f;
+  font-size:15px;
+  pointer-events:none;
+}
+.booking-home-field{margin-bottom:20px}
+.booking-home-duration{margin-bottom:20px}
+.booking-home-form .booking-home-message{margin:12px 0 8px}
+.booking-home-continue{height:48px;border-radius:8px;font-size:10px;letter-spacing:.08em;font-weight:800}
+.booking-home-continue:hover:not(.disabled){transform:translateY(-1px);box-shadow:0 9px 20px rgba(31,27,20,.12)}
+@media(max-width:600px){.booking-home-contact-grid{grid-template-columns:1fr;gap:11px}.booking-home-form input{height:50px}}
