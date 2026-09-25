@@ -25,7 +25,7 @@ def clean(v,n=500): return re.sub(r"[\x00-\x1f\x7f]","",str(v or "")).strip()[:n
 def valid_date(s):
     try: datetime.strptime(s,"%Y-%m-%d"); return True
     except (TypeError,ValueError): return False
-def parse_dt(s): return datetime.strptime(s,"%H:%M")
+def parse_dt(s): return datetime.combine(date.today(), datetime.strptime(s,"%H:%M").time())
 def occupied(c,day):
     rows=c.execute("SELECT start_time,duration FROM bookings WHERE booking_date=? AND status!='Annulée'",(day,)).fetchall()
     return [(parse_dt(r["start_time"]),int(r["duration"])) for r in rows]
