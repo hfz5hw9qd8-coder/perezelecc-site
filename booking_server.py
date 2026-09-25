@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import json, os, re, sqlite3
+from typing import Any, TypedDict
 from datetime import datetime, date, time, timedelta
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
 ROOT=os.path.dirname(os.path.abspath(__file__))
@@ -13,7 +14,7 @@ OPEN_HOUR=8; CLOSE_HOUR=18; SLOT_MINUTES=60
 DEFAULT_WORKDAYS="0,1,2,3,4,5"
 os.makedirs(os.path.dirname(DB),exist_ok=True)
 
-def init_db():
+def init_db() -> None:
     c=sqlite3.connect(DB); c.execute("""CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL)""")
     c.execute("""CREATE TABLE IF NOT EXISTS blocked_days(day TEXT PRIMARY KEY)""")
     c.execute("""CREATE TABLE IF NOT EXISTS bookings(
@@ -22,28 +23,35 @@ def init_db():
         duration INTEGER NOT NULL,status TEXT NOT NULL DEFAULT 'Confirmée',created_at TEXT NOT NULL)"""); c.commit(); c.close()
 init_db()
 
-def db():
+class AdminSettings(TypedDict):
+    open_hour: int
+    close_hour: int
+    workdays: list[int]
+    blocked_days: list[str]
+
+def db() -> sqlite3.Connection:
     c=sqlite3.connect(DB,timeout=10); c.row_factory=sqlite3.Row; return c
-def clean(v,n=500): return re.sub(r"[\x00-\x1f\x7f]","",str(v or "")).strip()[:n]
-def valid_date(s):
+def clean(v: Any,n: int=500) -> str: return re.sub(r"[\x00-\x1f\x7f]","",str(v or "")).strip()[:n]
+def valid_date(s: Any) -> bool:
+    if not isinstance(s,str): return False
     try: datetime.strptime(s,"%Y-%m-%d"); return True
-    except (TypeError,ValueError): return False
-def parse_dt(s): return datetime.combine(date.today(), datetime.strptime(s,"%H:%M").time())
-def admin_settings():
+    except ValueError: return False
+def parse_dt(s: str) -> datetime: return datetime.combine(date.today(), datetime.strptime(s,"%H:%M").time())
+def admin_settings() -> AdminSettings:
     c=db(); rows={r["key"]:r["value"] for r in c.execute("SELECT key,value FROM settings").fetchall()}; blocks=[r["day"] for r in c.execute("SELECT day FROM blocked_days ORDER BY day").fetchall()]; c.close()
     return {"open_hour":int(rows.get("open_hour",OPEN_HOUR)),"close_hour":int(rows.get("close_hour",CLOSE_HOUR)),"workdays":[int(x) for x in rows.get("workdays",DEFAULT_WORKDAYS).split(",") if x!=""],"blocked_days":blocks}
-def day_available(day):
+def day_available(day: str) -> bool:
     if not valid_date(day): return False
     s=admin_settings(); d=datetime.strptime(day,"%Y-%m-%d").weekday()
     return d in s["workdays"] and day not in s["blocked_days"]
 
-def occupied(c,day):
+def occupied(c: sqlite3.Connection,day: str) -> list[tuple[datetime,int]]:
     rows=c.execute("SELECT start_time,duration FROM bookings WHERE booking_date=? AND status!='Annulée'",(day,)).fetchall()
     return [(parse_dt(r["start_time"]),int(r["duration"])) for r in rows]
-def interval_free(start,duration,busy):
+def interval_free(start: datetime,duration: int,busy: list[tuple[datetime,int]]) -> bool:
     end=start+timedelta(hours=duration)
     return all(not (start < bs+timedelta(hours=bd) and bs < end) for bs,bd in busy)
-def slots_for(day,service="Autre"):
+def slots_for(day: str,service: str="Autre") -> list[str]:
     if not day_available(day): return []
     settings=admin_settings(); duration=SERVICES.get(service,1); c=db(); busy=occupied(c,day); c.close()
     out=[]; cur=datetime.combine(date.today(),time(settings["open_hour"])); close=datetime.combine(date.today(),time(settings["close_hour"]))
@@ -51,18 +59,18 @@ def slots_for(day,service="Autre"):
         if interval_free(cur,duration,busy): out.append(cur.strftime("%H:%M"))
         cur+=timedelta(minutes=SLOT_MINUTES)
     return out
-def send(h,code,obj):
+def send(h: BaseHTTPRequestHandler,code: int,obj: Any) -> None:
     b=json.dumps(obj,ensure_ascii=False).encode(); h.send_response(code)
     h.send_header("Content-Type","application/json; charset=utf-8"); h.send_header("Content-Length",str(len(b)))
     h.send_header("Cache-Control","no-store"); h.send_header("Access-Control-Allow-Origin","*")
     h.send_header("Access-Control-Allow-Headers","Content-Type, X-Admin-Key"); h.end_headers(); h.wfile.write(b)
 
 class Handler(SimpleHTTPRequestHandler):
-    def do_OPTIONS(self):
+    def do_OPTIONS(self) -> None:
         self.send_response(204); self.send_header("Access-Control-Allow-Origin","*")
         self.send_header("Access-Control-Allow-Headers","Content-Type, X-Admin-Key")
         self.send_header("Access-Control-Allow-Methods","GET, POST, OPTIONS"); self.end_headers()
-    def do_GET(self):
+    def do_GET(self) -> None:
         try:
             p=urlparse(self.path)
             if p.path=="/api/health": return send(self,200,{"ok":True,"service":"PEREZELECC calendrier"})
@@ -80,12 +88,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return send(self,200,{"bookings":rows})
             return super().do_GET()
         except Exception as e: return send(self,500,{"error":"Erreur serveur.","detail":str(e)})
-    def do_POST(self):
+    def do_POST(self) -> None:
         try:
             path = urlparse(self.path).path
             if path=="/api/admin/settings":
                 if self.headers.get("X-Admin-Key","")!=ADMIN_KEY: return send(self,401,{"error":"Clé administrateur incorrecte."})
-                n=int(self.headers.get("Content-Length","0")); data=json.loads(self.rfile.read(n) or b"{}")
+                n=int(self.headers.get("Content-Length","0")); data: dict[str, Any] = json.loads(self.rfile.read(n) or b"{}")
                 oh=int(data.get("open_hour",OPEN_HOUR)); ch=int(data.get("close_hour",CLOSE_HOUR)); wd=data.get("workdays",[])
                 if not (0<=oh<ch<=23) or not isinstance(wd,list) or any(int(x) not in range(7) for x in wd): return send(self,400,{"error":"Paramètres horaires invalides."})
                 c=db(); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('open_hour',?)",(str(oh),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('close_hour',?)",(str(ch),)); c.execute("INSERT OR REPLACE INTO settings(key,value) VALUES('workdays',?)",(",".join(str(int(x)) for x in sorted(set(wd))),)); c.commit(); c.close()
